@@ -1,8 +1,14 @@
 import PySimpleGUI as sg
 
-layout = [[sg.Text("Welcome to TradingStats!")], [sg.Button("OK")]]
+layout = [
+            [sg.Text("Welcome to TradingStats!")],
+            [sg.Text("Account Balance (Margin): ")],
+            [sg.Text("Account Balance (Cash): ")],
+            [sg.Text("{ Balance graph goes here }")],
+            [sg.Button("OK")]
+          ]
 
-window = sg.Window('TradingStats', layout, no_titlebar=True)
+window = sg.Window('TradingStats', layout, no_titlebar=True, margins=(15, 15))
 
 # Create an event loop
 while True:
