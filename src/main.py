@@ -10,7 +10,7 @@ import core.query_pub_assets as qpa
 # @click.option("--verbose/--no-verbose", default=False)
 
 ## Setup
-CONFIG_PATH = '../config.json'
+CONFIG_PATH = 'config.json'
 
 # fetch margin account balance for all assets & print to console
 def get_marginBal():

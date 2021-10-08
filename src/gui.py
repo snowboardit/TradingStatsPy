@@ -1,7 +1,7 @@
 import PySimpleGUI as sg
 from main import *
 
-UPDATE_FREQUENCY_MILLISECONDS = 20 * 1000
+UPDATE_FREQUENCY_MILLISECONDS = 5 * 1000
 
 layout = [
             [sg.Text("Welcome to TradingStats!")],
@@ -11,13 +11,13 @@ layout = [
 
 window = sg.Window("TradingStats",
                    layout,
-                   no_titlebar=True,
+                   no_titlebar=False,
                    grab_anywhere=True,
                    margins=(15, 15))
 
 def update():
   print("updated")
-  get_cashBal()
+  get_assets()
 
 # Create an event loop -- window.read(timeout=UPDATE_FREQUENCY_MILLISECONDS)
 while True:
@@ -26,7 +26,7 @@ while True:
     # presses the OK button
     if event == sg.WIN_CLOSED:
         break
-    
+        
     update()
 
 window.close()
