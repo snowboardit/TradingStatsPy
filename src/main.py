@@ -1,6 +1,6 @@
 # Imports
-from core import query_prv_balance as qb
-from core import query_pub_assets as qpa
+import core.query_prv_balance as qb
+import core.query_pub_assets as qpa
 
 # @click.option("--asset", type=str, default=None,
 #               help='optional, if none, return all assets with non-empty balance. You can specify an asset (e.g. "BTC")')
