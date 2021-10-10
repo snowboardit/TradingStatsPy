@@ -11,8 +11,8 @@ CONFIG_PATH = 'C:/Users/maxla/Dev/TradingStats/config.json'
 # @click.option("--symbol", type=str, default=None, help="symbol: BTC-PERP")
 # @click.option('--verbose/--no-verbose', default=False)
 def get_openOrders():
-  return loo.run(CONFIG_PATH, "ascendex", None, True)
+  return loo.run(CONFIG_PATH, "ascendex", None, False)
 
 # fetch order history
 def get_orderHistory():
-  return coh.run(CONFIG_PATH, "ascendex", None, None, False, True)
+  return coh.run(CONFIG_PATH, "ascendex", None, None, False, False)
