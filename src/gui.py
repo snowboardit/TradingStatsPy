@@ -1,11 +1,40 @@
-import PySimpleGUI as sg
+
 import time
+import PySimpleGUI as sg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, FigureCanvasAgg
+from matplotlib.figure import Figure
 from main import *
 
-UPDATE_FREQUENCY_MILLISECONDS = 3 * 1000
+UPDATE_FREQUENCY_MILLISECONDS = 2 * 1000
 
 
+################
+#    UTILS     #
+################
+# Generate a formatted order string from an order object
+def generateOrderStr(order):
+  _time = str(order['time'])[:10]
+  _fmtd_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(_time)))
+  _pair = "{}/USD".format(order['symbol'].split('-')[0])
+  _side = order['side'].upper()
+  _amount = order['orderQty']
+  _price = order['price']
+  _result = "{}: {} - New order for {} @ {} USD - {}".format(_fmtd_time, _pair, _amount, _price, _side)
+  return _result
 
+
+def draw_figure(canvas, figure, loc=(0, 0)):
+    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
+    figure_canvas_agg.draw()
+    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+    return figure_canvas_agg
+
+
+##################
+#   PROCESSING   #
+##################
+
+# Initialize orders array and latest numSeq
 def initOrders():
 
   global orders
@@ -18,19 +47,13 @@ def initOrders():
   if _order_history['code'] == 0: # check for error in response
     for i in range(10):
       order = _order_history['data'][i]
-      _time = str(order['time'])[:10]
-      _fmtd_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(_time)))
-      _pair = "{}/USD".format(order['symbol'].split('-')[0])
-      _side = order['side']
-      _amount = order['orderQty']
-      _price = order['price']
-      _result = "{}: {} - New order for {} @ {} USD - {}".format(_fmtd_time, _pair, _amount, _price, _side)
+      order_str = generateOrderStr(order)
 
       if order['seqNum'] > latest_seqNum:
         latest_seqNum = order['seqNum']
 
       # print(_result)
-      orders.append(_result)
+      orders.append(order_str)
 
 
 # determine if new order has been published, if so add it to orders array
@@ -47,6 +70,37 @@ def newOrderFound():
         latest_seqNum = order['seqNum']
         return True
   return False
+
+
+# init graph - 72 hr time period
+def initGraph(window):
+
+  canvas_elem = window['-GRAPH-']
+  canvas = canvas_elem.TKCanvas
+
+  # get the balance data - separate x time and y balance values
+  positions = get_positions()
+  balance = get_balance(positions)
+  print("balance: $", balance)
+
+  # draw the initial plot in the window
+  fig = Figure()
+  ax = fig.add_subplot(111)
+  ax.set_xlabel("Time (x)")
+  ax.set_ylabel("Balance (y)")
+  ax.grid()
+  fig_agg = draw_figure(canvas, fig)
+
+  for i in range(len(dpts)):
+    ax.cla()                    # clear the subplot
+    ax.grid()                   # draw the grid
+    # ax.plot(, ,  color='purple')
+    fig_agg.draw()
+
+
+    # for res in response['data']['collaterals']:
+    #   cur_account_bal = (if balance is positive add together) - (all contract upnl)
+
 
 
 
@@ -76,9 +130,10 @@ def initWindow():
 
   layout = [
             [sg.Text("Welcome to TradingStats!")],
-            [sg.Multiline(default_text=ordersStr, size=(70, 13), autoscroll=True, enter_submits=False, key='-ORDERS-', do_not_clear=True)],
-            [sg.HorizontalSeparator()],
-            [sg.Text("{ Balance graph goes here }")],
+            # [sg.Text(text=ordersStr, size=(70, 13), justification='left', key='-ORDERS-')],
+            [sg.Multiline(default_text=ordersStr, size=(70, 13), autoscroll=True, enter_submits=False, key='-ORDERS-', do_not_clear=True, no_scrollbar=True)],
+            [sg.HorizontalSeparator('')],
+            [sg.Canvas(size=(400, 400), key='-GRAPH-')],
             [sg.Text(_last_updated_str, key='-UPDATED-')]
           ]
 
@@ -88,9 +143,15 @@ def initWindow():
                    grab_anywhere=True,
                    margins=(10, 10))
 
+  initGraph(window)
+
   print("Window initialization completed")
   return window
 
+
+##################
+#    Runtime     #
+##################
 
 def main():
 
@@ -108,7 +169,7 @@ def main():
     if newOrderFound():
       updateWindow(window)
 
-    # window.close()
+  window.close()
 
 
 if __name__ == '__main__':
