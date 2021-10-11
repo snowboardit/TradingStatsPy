@@ -1,2 +1,3 @@
 pysimplegui
 pyyaml
+matplotlib
