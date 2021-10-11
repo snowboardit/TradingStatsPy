@@ -36,7 +36,8 @@ def run(config, botname, verbose):
 
     if verbose:
         pprint(res.headers)
-        return res.json()
+
+    return res.json()
 
 
 # if __name__ == "__main__":

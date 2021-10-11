@@ -79,8 +79,7 @@ def initGraph(window):
   canvas = canvas_elem.TKCanvas
 
   # get the balance data - separate x time and y balance values
-  positions = get_positions()
-  balance = get_balance(positions)
+  balance = get_balance()
   print("balance: $", balance)
 
   # draw the initial plot in the window
@@ -91,11 +90,11 @@ def initGraph(window):
   ax.grid()
   fig_agg = draw_figure(canvas, fig)
 
-  for i in range(len(dpts)):
-    ax.cla()                    # clear the subplot
-    ax.grid()                   # draw the grid
-    # ax.plot(, ,  color='purple')
-    fig_agg.draw()
+  # for i in range(len(dpts)):
+  #   ax.cla()                    # clear the subplot
+  #   ax.grid()                   # draw the grid
+  #   # ax.plot(, ,  color='purple')
+  #   fig_agg.draw()
 
 
     # for res in response['data']['collaterals']:

@@ -4,7 +4,7 @@ import core.get_curr_order_hist as coh
 import core.get_futures_positions as fp
 
 # Setup
-CONFIG_PATH = 'C:/Users/maxla/Dev/TradingStats/config.json'
+CONFIG_PATH = 'Z:/Dev/TradingStats/config.json'
 BOT_NAME = 'ascendex'
 
 # fetch all open orders
@@ -27,18 +27,26 @@ def get_positions():
   return fp.run(CONFIG_PATH, BOT_NAME, False)
 
 # extract balance from positions and collateral
-def get_balance(positions):
+def get_balance():
+
+  positions = get_positions()
+  print(positions)
+
   collateral_balance = 0
   contracts_balance = 0
 
   if positions['code'] == 0:
     collateral = positions['data']['collaterals']
     for asset in collateral:
-      if asset['referencePrice'] > 0:
-        collateral_balance += (asset['balance'] * asset['referencePrice'])
+      bal = float(asset['balance'])
+      ref_price = float(asset['referencePrice'])
+      if float(asset['referencePrice']) > 0:
+        collateral_balance += (bal * ref_price)
 
-    contacts = positions['data']['contracts']
-    for contract in contacts:
-      contracts_balance += (contract['unrealizedPnl'] * contract['markPrice'])
+    contracts = positions['data']['contracts']
+    for contract in contracts:
+      unreal_pnl = float(contract['unrealizedPnl'])
+      mark_price = float(contract['markPrice'])
+      contracts_balance += (unreal_pnl * mark_price)
 
   return collateral_balance + contracts_balance
