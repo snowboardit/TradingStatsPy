@@ -1,4 +1,5 @@
 # Imports
+from datetime import datetime
 import core.list_open_order as loo
 import core.get_curr_order_hist as coh
 import core.get_futures_positions as fp
@@ -42,11 +43,15 @@ def get_balance():
       ref_price = float(asset['referencePrice'])
       if float(asset['referencePrice']) > 0:
         collateral_balance += (bal * ref_price)
+    print("collateral_balance\n", collateral_balance)
 
     contracts = positions['data']['contracts']
     for contract in contracts:
       unreal_pnl = float(contract['unrealizedPnl'])
-      mark_price = float(contract['markPrice'])
-      contracts_balance += (unreal_pnl * mark_price)
+      contracts_balance += unreal_pnl
+    print("contracts_balance\n",contracts_balance)
 
   return collateral_balance + contracts_balance
+
+def get_timestamp():
+  return datetime.now()

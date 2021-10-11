@@ -6,6 +6,8 @@ from matplotlib.figure import Figure
 from main import *
 
 UPDATE_FREQUENCY_MILLISECONDS = 2 * 1000
+time_data = []
+price_data = []
 
 
 ################
@@ -79,8 +81,10 @@ def initGraph(window):
   canvas = canvas_elem.TKCanvas
 
   # get the balance data - separate x time and y balance values
-  balance = get_balance()
-  print("balance: $", balance)
+  print("balance: $", get_balance())
+  price_data.append(get_balance())
+  time_data.append(get_timestamp())
+  
 
   # draw the initial plot in the window
   fig = Figure()
@@ -90,11 +94,10 @@ def initGraph(window):
   ax.grid()
   fig_agg = draw_figure(canvas, fig)
 
-  # for i in range(len(dpts)):
-  #   ax.cla()                    # clear the subplot
-  #   ax.grid()                   # draw the grid
-  #   # ax.plot(, ,  color='purple')
-  #   fig_agg.draw()
+  ax.cla()                    # clear the subplot
+  ax.grid()                   # draw the grid
+  ax.plot(time_data, price_data, color='purple')
+  fig_agg.draw()
 
 
     # for res in response['data']['collaterals']:
@@ -130,6 +133,7 @@ def initWindow():
   layout = [
             [sg.Text("Welcome to TradingStats!")],
             # [sg.Text(text=ordersStr, size=(70, 13), justification='left', key='-ORDERS-')],
+            [sg.Text("Current trading balance: $"), sg.Text("0", key='-BALANCE-')],
             [sg.Multiline(default_text=ordersStr, size=(70, 13), autoscroll=True, enter_submits=False, key='-ORDERS-', do_not_clear=True, no_scrollbar=True)],
             [sg.HorizontalSeparator('')],
             [sg.Canvas(size=(400, 400), key='-GRAPH-')],
