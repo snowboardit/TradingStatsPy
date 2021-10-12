@@ -25,7 +25,7 @@ def generateOrderStr(order):
   return _result
 
 
-def draw_figure(canvas, figure, loc=(0, 0)):
+def drawFigure(canvas, figure, loc=(0, 0)):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
     figure_canvas_agg.draw()
     figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
@@ -92,7 +92,7 @@ def initGraph(window):
   ax.set_xlabel("Time (x)")
   ax.set_ylabel("Balance (y)")
   ax.grid()
-  fig_agg = draw_figure(canvas, fig)
+  fig_agg = drawFigure(canvas, fig)
 
   ax.cla()                    # clear the subplot
   ax.grid()                   # draw the grid
@@ -103,6 +103,17 @@ def initGraph(window):
     # for res in response['data']['collaterals']:
     #   cur_account_bal = (if balance is positive add together) - (all contract upnl)
 
+
+
+def updateGraph(window):
+  canvas_elem = window['-GRAPH-']
+  canvas = canvas_elem.TKCanvas
+
+  # get the balance data - separate x time and y balance values
+  print("balance: $", get_balance())
+  price_data.append(get_balance())
+  time_data.append(get_timestamp())
+  print('Graph updated')
 
 
 
