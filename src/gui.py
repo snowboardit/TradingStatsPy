@@ -81,21 +81,18 @@ def initGraph(window):
   canvas = canvas_elem.TKCanvas
 
   # get the balance data - separate x time and y balance values
-  print("balance: $", get_balance())
+  # print("balance: $", get_balance())
+  # print("time: ", get_timestamp())
   price_data.append(get_balance())
   time_data.append(get_timestamp())
   
-
   # draw the initial plot in the window
   fig = Figure()
   ax = fig.add_subplot(111)
-  ax.set_xlabel("Time (x)")
-  ax.set_ylabel("Balance (y)")
+  ax.set_xlabel("Time")
+  ax.set_ylabel("Balance")
   ax.grid()
   fig_agg = drawFigure(canvas, fig)
-
-  ax.cla()                    # clear the subplot
-  ax.grid()                   # draw the grid
   ax.plot(time_data, price_data, color='purple')
   fig_agg.draw()
 
@@ -113,7 +110,20 @@ def updateGraph(window):
   print("balance: $", get_balance())
   price_data.append(get_balance())
   time_data.append(get_timestamp())
-  print('Graph updated')
+  
+
+  # draw the initial plot in the window
+  fig = Figure()
+  ax = fig.add_subplot(111)
+  ax.set_xlabel("Time (x)")
+  ax.set_ylabel("Balance (y)")
+  ax.grid()
+  fig_agg = drawFigure(canvas, fig)
+
+  ax.cla()                    # clear the subplot
+  ax.grid()                   # draw the grid
+  ax.plot(time_data, price_data, color='purple')
+  fig_agg.draw()
 
 
 
@@ -155,9 +165,8 @@ def initWindow():
                    layout,
                    no_titlebar=False,
                    grab_anywhere=True,
-                   margins=(10, 10))
-
-  initGraph(window)
+                   margins=(10, 10),
+                   finalize=True)
 
   print("Window initialization completed")
   return window
@@ -166,10 +175,10 @@ def initWindow():
 ##################
 #    Runtime     #
 ##################
-
 def main():
 
-  window = initWindow()
+  window = initWindow() # Initialize Window 
+  initGraph(window) # Initialize and draw graph inside of window
 
   # Create an event loop
   while True:
@@ -178,10 +187,15 @@ def main():
     # End program if user closes window or
     # presses the OK button
     if event == sg.WIN_CLOSED:
-        break
+      break
     
+    # Update the graph every iteration
+    updateGraph(window)
+
+    # Only if there is a new order found do we update the order book
     if newOrderFound():
       updateWindow(window)
+
 
   window.close()
 
