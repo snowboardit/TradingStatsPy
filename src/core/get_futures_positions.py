@@ -31,7 +31,7 @@ def run(config, botname, verbose):
     res = requests.get(url, headers=headers)
     # import ipdb; ipdb.set_trace()
     data = parse_response(res)
-    print(json.dumps(data, indent=4, sort_keys=True))
+    # print(json.dumps(data, indent=4, sort_keys=True))
     
 
     if verbose:

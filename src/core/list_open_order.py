@@ -34,7 +34,7 @@ def run(config, botname, symbol, verbose):
     res = requests.get(url, headers=headers, params=reqParams)
 
     data = parse_response(res)
-    print(json.dumps(data, indent=4, sort_keys=True))
+    # print(json.dumps(data, indent=4, sort_keys=True))
     return data
 
 

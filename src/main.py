@@ -5,7 +5,8 @@ import core.get_curr_order_hist as coh
 import core.get_futures_positions as fp
 
 # Setup
-CONFIG_PATH = 'Z:/Dev/TradingStats/config.json'
+# CONFIG_PATH = 'C:/Users/maxla/Dev/TradingStats/config.json' ## MAX-PC
+CONFIG_PATH = 'C:/Users/maxla/Dev/TradingStats/config.json'
 BOT_NAME = 'ascendex'
 
 # fetch all open orders

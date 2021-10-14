@@ -5,7 +5,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, FigureCanvasAgg
 from matplotlib.figure import Figure
 from main import *
 
-UPDATE_FREQUENCY_MILLISECONDS = 2 * 1000
+UPDATE_FREQUENCY_MILLISECONDS = 3 * 1000
 time_data = []
 price_data = []
 
@@ -81,24 +81,21 @@ def initGraph(window):
   canvas = canvas_elem.TKCanvas
 
   # get the balance data - separate x time and y balance values
-  # print("balance: $", get_balance())
-  # print("time: ", get_timestamp())
   price_data.append(get_balance())
   time_data.append(get_timestamp())
   
   # draw the initial plot in the window
   fig = Figure()
+  fig_agg = drawFigure(canvas, fig)
   ax = fig.add_subplot(111)
   ax.set_xlabel("Time")
   ax.set_ylabel("Balance")
   ax.grid()
-  fig_agg = drawFigure(canvas, fig)
   ax.plot(time_data, price_data, color='purple')
   fig_agg.draw()
 
-
-    # for res in response['data']['collaterals']:
-    #   cur_account_bal = (if balance is positive add together) - (all contract upnl)
+  # for res in response['data']['collaterals']:
+  #   cur_account_bal = (if balance is positive add together) - (all contract upnl)
 
 
 
@@ -112,18 +109,18 @@ def updateGraph(window):
   time_data.append(get_timestamp())
   
 
-  # draw the initial plot in the window
+  # clear canvas and redraw shit
   fig = Figure()
   ax = fig.add_subplot(111)
+  ax.cla()                    # clear the subplot
   ax.set_xlabel("Time (x)")
   ax.set_ylabel("Balance (y)")
   ax.grid()
-  fig_agg = drawFigure(canvas, fig)
-
-  ax.cla()                    # clear the subplot
-  ax.grid()                   # draw the grid
   ax.plot(time_data, price_data, color='purple')
-  fig_agg.draw()
+
+  last_updated = time.localtime()
+  _last_updated_str = "Last updated: {}".format(time.strftime("%H:%M:%S", last_updated))
+  window['-UPDATED-'].update(_last_updated_str)
 
 
 
@@ -166,7 +163,8 @@ def initWindow():
                    no_titlebar=False,
                    grab_anywhere=True,
                    margins=(10, 10),
-                   finalize=True)
+                   finalize=True,
+                   font='Times')
 
   print("Window initialization completed")
   return window
