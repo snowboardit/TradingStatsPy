@@ -5,7 +5,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, FigureCanvasAgg
 from matplotlib.figure import Figure
 from main import *
 
-UPDATE_FREQUENCY_MILLISECONDS = 3 * 1000
+UPDATE_FREQUENCY_MILLISECONDS = 5 * 1000
 time_data = []
 price_data = []
 
@@ -58,6 +58,7 @@ def initOrders():
       orders.append(order_str)
 
 
+
 # determine if new order has been published, if so add it to orders array
 def newOrderFound():
 
@@ -74,15 +75,31 @@ def newOrderFound():
   return False
 
 
-# init graph - 72 hr time period
+
+def updateBalance(window):
+  _balance = str(get_balance())
+  window['-BALANCE-'].update(_balance)
+
+
+
+def updateTimestamp(window):
+  last_updated = time.localtime()
+  _last_updated_str = "Last updated: {}".format(time.strftime("%H:%M:%S", last_updated))
+  window['-UPDATED-'].update(_last_updated_str)
+
+
+
+# init graph
 def initGraph(window):
 
   canvas_elem = window['-GRAPH-']
   canvas = canvas_elem.TKCanvas
 
   # get the balance data - separate x time and y balance values
-  price_data.append(get_balance())
-  time_data.append(get_timestamp())
+  _balance = get_balance()
+  _timestamp = get_timestamp() 
+  price_data.append(_balance)
+  time_data.append(_timestamp)
   
   # draw the initial plot in the window
   fig = Figure()
@@ -94,33 +111,29 @@ def initGraph(window):
   ax.plot(time_data, price_data, color='purple')
   fig_agg.draw()
 
-  # for res in response['data']['collaterals']:
-  #   cur_account_bal = (if balance is positive add together) - (all contract upnl)
+  updateTimestamp(window)                        # update timestamp
+  updateBalance(window)                          # update balance
+
+  return ax, fig_agg
 
 
 
-def updateGraph(window):
-  canvas_elem = window['-GRAPH-']
-  canvas = canvas_elem.TKCanvas
+def updateGraph(window, ax, fig_agg):
 
   # get the balance data - separate x time and y balance values
-  print("balance: $", get_balance())
-  price_data.append(get_balance())
-  time_data.append(get_timestamp())
+  print("Updated balance: $", get_balance())
+  _balance = get_balance()
+  _timestamp = get_timestamp() 
+  price_data.append(_balance)
+  time_data.append(_timestamp)
   
+  ax.cla()                                       # clear the subplot
+  ax.grid()                                      # draw a grid
+  ax.plot(time_data, price_data, color='purple') # re-plot with new data
+  fig_agg.draw()                                 # re-draw/render the canvas
 
-  # clear canvas and redraw shit
-  fig = Figure()
-  ax = fig.add_subplot(111)
-  ax.cla()                    # clear the subplot
-  ax.set_xlabel("Time (x)")
-  ax.set_ylabel("Balance (y)")
-  ax.grid()
-  ax.plot(time_data, price_data, color='purple')
-
-  last_updated = time.localtime()
-  _last_updated_str = "Last updated: {}".format(time.strftime("%H:%M:%S", last_updated))
-  window['-UPDATED-'].update(_last_updated_str)
+  updateTimestamp(window)                        # update timestamp
+  updateBalance(window)                          # update balance
 
 
 
@@ -128,12 +141,11 @@ def updateGraph(window):
 def updateWindow(window):
   _order_history = get_orderHistory()
   ordersStr = '\n'.join(orders)
-  last_updated = time.localtime()
-  _last_updated_str = "Last updated: {}".format(time.strftime("%H:%M:%S", last_updated))
 
   if _order_history['code'] == 0: # check if data can be used
     window['-ORDERS-'].update(ordersStr)
-    window['-UPDATED-'].update(_last_updated_str)
+    updateTimestamp(window)
+    updateBalance(window)
     print("Window updated")
 
 
@@ -170,13 +182,15 @@ def initWindow():
   return window
 
 
+
+
 ##################
 #    Runtime     #
 ##################
 def main():
 
   window = initWindow() # Initialize Window 
-  initGraph(window) # Initialize and draw graph inside of window
+  ax, fig_agg = initGraph(window) # Initialize and draw graph inside of window
 
   # Create an event loop
   while True:
@@ -188,7 +202,7 @@ def main():
       break
     
     # Update the graph every iteration
-    updateGraph(window)
+    updateGraph(window, ax, fig_agg)
 
     # Only if there is a new order found do we update the order book
     if newOrderFound():
@@ -196,6 +210,7 @@ def main():
 
 
   window.close()
+
 
 
 if __name__ == '__main__':
