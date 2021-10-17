@@ -32,7 +32,7 @@ def get_positions():
 def get_balance():
 
   positions = get_positions()
-  print(positions)
+  # print(positions)
 
   collateral_balance = 0
   contracts_balance = 0
@@ -44,13 +44,13 @@ def get_balance():
       ref_price = float(asset['referencePrice'])
       if float(asset['referencePrice']) > 0:
         collateral_balance += (bal * ref_price)
-    print("collateral_balance\n", collateral_balance)
+    # print("collateral_balance\n", collateral_balance)
 
     contracts = positions['data']['contracts']
     for contract in contracts:
       unreal_pnl = float(contract['unrealizedPnl'])
       contracts_balance += unreal_pnl
-    print("contracts_balance\n",contracts_balance)
+    # print("contracts_balance\n",contracts_balance)
 
   return collateral_balance + contracts_balance
 
