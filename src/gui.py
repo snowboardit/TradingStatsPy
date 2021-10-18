@@ -73,7 +73,8 @@ def newOrderFound():
     for order in _order_history['data']:
       if order['seqNum'] > latest_seqNum:
         print("New order found:\n", order)
-        orders.append(order)
+        order_str = generateOrderStr(order)
+        orders.append(order_str)
         latest_seqNum = order['seqNum']
         return True
   return False
@@ -120,10 +121,7 @@ def updateWindow(window):
   print(orders)
   ordersStr = '\n'.join(orders)
 
-  try:
-    window['-ORDERS-'].update(ordersStr)
-  except Exception as e:
-    print('error in updateWindow: ' + e)
+  window['-ORDERS-'].update(ordersStr)
 
   updateTimestamp(window)
   updateBalance(window)
