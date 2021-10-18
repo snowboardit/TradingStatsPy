@@ -71,10 +71,10 @@ def newOrderFound():
   _order_history = get_orderHistory()
   if _order_history['code'] == 0: # check for error in response
     for order in _order_history['data']:
-      if order['seqNum'] > latest_seqNum:
-        print("New order found:\n", order)
-        order_str = generateOrderStr(order)
-        orders.append(order_str)
+      if order['seqNum'] > latest_seqNum: # loop through order history and check for new order
+        print("New order found:\n", order) # 
+        order_str = generateOrderStr(order) # generate order string from order JSON
+        orders.insert(0, order_str) # insert new order at first index of orders list
         latest_seqNum = order['seqNum']
         return True
   return False
