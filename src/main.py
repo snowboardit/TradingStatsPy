@@ -1,13 +1,17 @@
 # Imports
 from datetime import datetime
+import os
 import core.list_open_order as loo
 import core.get_curr_order_hist as coh
 import core.get_futures_positions as fp
 
 # Setup
 # CONFIG_PATH = 'C:/Users/maxla/Dev/TradingStats/config.json' ## MAX-PC
-# CONFIG_PATH = 'C:/Users/maxla/Dev/TradingStats/config.json'
-CONFIG_PATH = 'Z:\Dev\TradingStats\config.json' ## WORK-PC
+# CONFIG_PATH = 'C:/Users/Max/Dev/TradingStats/config.json' ## MAX-LT
+# CONFIG_PATH = 'Z:\Dev\TradingStats\config.json' ## WORK-PC
+CONFIG_PATH = '../config.json'
+LOGFILE_PATH = '../log.txt'
+
 BOT_NAME = 'ascendex'
 
 # fetch all open orders
@@ -55,5 +59,29 @@ def get_balance():
 
   return collateral_balance + contracts_balance
 
+
 def get_timestamp():
   return datetime.now()
+
+
+
+#############
+#  Logging  #
+#############
+def initLog():
+  try:
+    f = open(LOGFILE_PATH, 'a')
+    print('Logfile opened successfully')
+    f.write('TradingStats - Max L. 2021 - Started at {}\n'.format(datetime.now()))
+    f.close()
+  except Exception as e:
+    print('Error opening log: ', e)
+
+
+def writeToLog(content):
+  try:
+    f = open(LOGFILE_PATH, 'a')
+    f.write(content + '\n')
+    f.close()
+  except Exception as e:
+    print('Error writing to log: ', e)

@@ -1,14 +1,15 @@
 
+from logging import disable
 import time
 import PySimpleGUI as sg
-import screeninfo
+from PySimpleGUI.PySimpleGUI import T
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, FigureCanvasAgg
 from matplotlib.figure import Figure
 from main import *
 
 UPDATE_FREQUENCY_MILLISECONDS = 5 * 1000
-WINDOW_WIDTH = screeninfo.get_monitors()[0].width
-WINDOW_HEIGHT = screeninfo.get_monitors()[0].height
+WINDOW_WIDTH = 1920
+WINDOW_HEIGHT = 600
 time_data = []
 price_data = []
 
@@ -72,8 +73,9 @@ def newOrderFound():
   if _order_history['code'] == 0: # check for error in response
     for order in _order_history['data']:
       if order['seqNum'] > latest_seqNum: # loop through order history and check for new order
-        print("New order found:\n", order) # 
         order_str = generateOrderStr(order) # generate order string from order JSON
+        print("New order found:\n", order_str)
+        writeToLog('NEW ORDER: {}'.format(order_str))
         orders.insert(0, order_str) # insert new order at first index of orders list
         latest_seqNum = order['seqNum']
         return True
@@ -82,7 +84,7 @@ def newOrderFound():
 
 
 def updateBalance(window):
-  _balance = str(get_balance())
+  _balance = str(round(get_balance(), 2))
   window['-BALANCE-'].update("${}".format(_balance))
 
 
@@ -168,13 +170,13 @@ def initWindow():
   ordersStr = '\n'.join(orders)
   last_updated = time.localtime()
   _last_updated_str = "Last updated: {}".format(time.strftime("%H:%M:%S", last_updated))
-  _balance = get_balance()  
+  _balance = get_balance()
 
   layout = [
             # [sg.Text("Welcome to TradingStats!")],
             # [sg.Text(text=ordersStr, size=(70, 13), justification='left', key='-ORDERS-')],
             [sg.Text("Current trading balance: ", font='Arial 24 bold'), sg.Text("${}".format(_balance), key='-BALANCE-', font='Arial 24')],
-            [sg.Multiline(default_text=ordersStr, size=(70, 400), autoscroll=True, enter_submits=False, key='-ORDERS-', do_not_clear=True, no_scrollbar=True), sg.Canvas(key='-GRAPH-')],
+            [sg.Multiline(default_text=ordersStr, size=(70, 400), disabled=True, autoscroll=True, enter_submits=False, key='-ORDERS-', do_not_clear=True, no_scrollbar=True), sg.Canvas(key='-GRAPH-')],
             [sg.Text(_last_updated_str, key='-UPDATED-')]
           ]
 
@@ -198,24 +200,32 @@ def initWindow():
 ##################
 def main():
 
+  initLog() # Initialize log
   window = initWindow() # Initialize Window 
   ax, fig_agg = initGraph(window) # Initialize and draw graph inside of window
 
   # Create an event loop
   while True:
-    event, values = window.read(timeout=UPDATE_FREQUENCY_MILLISECONDS)
+    # temp general try/except block
+    try:
+      event, values = window.read(timeout=UPDATE_FREQUENCY_MILLISECONDS)
 
-    # End program if user closes window or
-    # presses the OK button
-    if event == sg.WIN_CLOSED:
-      break
-    
-    # Update the graph every iteration
-    updateGraph(window, ax, fig_agg)
+      # End program if user closes window or
+      # presses the OK button
+      if event == sg.WIN_CLOSED:
+        break
+      
+      # Update the graph every iteration
+      updateGraph(window, ax, fig_agg)
 
-    # Only if there is a new order found do we update the order book
-    if newOrderFound():
-      updateWindow(window)
+      # Only if there is a new order found do we update the order book
+      if newOrderFound():
+        updateWindow(window)
+
+    except Exception as e:
+      print('ERR: ', e)
+      writeToLog('ERROR: {}'.format(e))
+
 
 
   window.close()
