@@ -9,7 +9,7 @@ from main import *
 
 UPDATE_FREQUENCY_MILLISECONDS = 5 * 1000
 WINDOW_WIDTH = 1920
-WINDOW_HEIGHT = 600
+WINDOW_HEIGHT = 1080
 time_data = []
 price_data = []
 
@@ -176,13 +176,13 @@ def initWindow():
             # [sg.Text("Welcome to TradingStats!")],
             # [sg.Text(text=ordersStr, size=(70, 13), justification='left', key='-ORDERS-')],
             [sg.Text("Current trading balance: ", font='Arial 24 bold'), sg.Text("${}".format(_balance), key='-BALANCE-', font='Arial 24')],
-            [sg.Multiline(default_text=ordersStr, size=(70, 400), disabled=True, autoscroll=True, enter_submits=False, key='-ORDERS-', do_not_clear=True, no_scrollbar=True), sg.Canvas(key='-GRAPH-')],
-            [sg.Text(_last_updated_str, key='-UPDATED-')]
+            [sg.Text(_last_updated_str, key='-UPDATED-')],
+            [sg.Multiline(default_text=ordersStr, size=(70, 400), disabled=True, autoscroll=True, enter_submits=False, key='-ORDERS-', do_not_clear=True, no_scrollbar=True), sg.Canvas(key='-GRAPH-')]
           ]
 
   window = sg.Window("TradingStats",
                    layout,
-                   size=(WINDOW_WIDTH, 500),
+                   size=(WINDOW_WIDTH, WINDOW_HEIGHT),
                    no_titlebar=False,
                    grab_anywhere=True,
                    margins=(3, 3),
