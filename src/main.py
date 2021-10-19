@@ -1,6 +1,5 @@
 # Imports
 from datetime import datetime
-import os
 import core.list_open_order as loo
 import core.get_curr_order_hist as coh
 import core.get_futures_positions as fp
