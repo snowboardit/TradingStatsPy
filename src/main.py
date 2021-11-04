@@ -3,6 +3,20 @@ from datetime import datetime
 import core.list_open_order as loo
 import core.get_curr_order_hist as coh
 import core.get_futures_positions as fp
+import kucoin_futures as kf
+
+"""
+New exchange API - KuCoin - https://docs.kucoin.com/#get-account-info
+"""
+
+
+
+
+
+"""
+----------------------------------------------------
+"""
+
 
 # Setup
 # CONFIG_PATH = 'C:/Users/maxla/Dev/TradingStats/config.json' ## MAX-PC

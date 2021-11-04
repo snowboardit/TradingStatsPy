@@ -1,5 +1,4 @@
 
-from logging import disable
 import time
 import PySimpleGUI as sg
 from PySimpleGUI.PySimpleGUI import T
@@ -96,6 +95,11 @@ def updateTimestamp(window):
 
 
 
+def updateOrders(new_order):
+  pass
+
+
+
 def updateGraph(window, ax, fig_agg):
 
   # get balance and timestamp, then assign them to their global lists
@@ -177,7 +181,7 @@ def initWindow():
             # [sg.Text(text=ordersStr, size=(70, 13), justification='left', key='-ORDERS-')],
             [sg.Text("Current trading balance: ", font='Arial 24 bold'), sg.Text("${}".format(_balance), key='-BALANCE-', font='Arial 24')],
             [sg.Text(_last_updated_str, key='-UPDATED-')],
-            [sg.Multiline(default_text=ordersStr, size=(70, 400), disabled=True, autoscroll=True, enter_submits=False, key='-ORDERS-', do_not_clear=True, no_scrollbar=True), sg.Canvas(key='-GRAPH-')]
+            [sg.Multiline(default_text=ordersStr, size=(70, 400), disabled=True, autoscroll=False, enter_submits=False, key='-ORDERS-', do_not_clear=True, no_scrollbar=True), sg.Canvas(key='-GRAPH-')]
           ]
 
   window = sg.Window("TradingStats",
